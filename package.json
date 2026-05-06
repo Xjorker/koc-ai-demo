@@ -1,0 +1,25 @@
+{
+  "name": "koc-ai-assistant",
+  "version": "1.0.0",
+  "description": "KOC AI增长助手 - 腾讯PCG校园AI产品创意大赛参赛作品",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8080",
+    "dev": "npx http-server -p 8080 -c-1"
+  },
+  "keywords": [
+    "AI",
+    "KOC",
+    "social media",
+    "content creation",
+    "Tencent PCG"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "files": [
+    "index.html",
+    "style.css",
+    "app.js",
+    "assets/**/*"
+  ]
+}

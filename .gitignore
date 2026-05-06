@@ -1,0 +1,10 @@
+﻿backend/venv/
+backend/__pycache__/
+backend/.git
+node_modules/
+*.pyc
+*.pyo
+*.docx
+*.mp4
+*.pdf
+.DS_Store

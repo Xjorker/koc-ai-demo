@@ -1,0 +1,139 @@
+{
+  "accounts": [
+    {
+      "id": "koc_001",
+      "name": "舌尖上的城市",
+      "category": "food",
+      "categoryName": "美食探店",
+      "avatar": "🍜",
+      "bio": "专注城市美食探店，分享地道小吃与网红餐厅，带你吃遍大街小巷",
+      "platform": "视频号",
+      "stats": {
+        "followers": 45200,
+        "views": 1280000,
+        "likes": 89500,
+        "comments": 12300,
+        "engagementRate": 7.2
+      },
+      "recentContent": [
+        {"title": "藏在巷子里的老字号牛肉面", "views": 125000, "likes": 8900, "date": "2026-05-01"},
+        {"title": "人均30吃到撑的自助火锅", "views": 98000, "likes": 7200, "date": "2026-04-28"},
+        {"title": "这家人气煎饼果子太绝了", "views": 156000, "likes": 11200, "date": "2026-04-25"}
+      ],
+      "audience": {
+        "age": "25-40岁",
+        "gender": "女性偏多",
+        "location": "一二线城市"
+      },
+      "contentTags": ["美食探店", "地道小吃", "性价比", "网红餐厅", "周末去哪吃"]
+    },
+    {
+      "id": "koc_002",
+      "name": "科技小达人",
+      "category": "tech",
+      "categoryName": "科技数码",
+      "avatar": "📱",
+      "bio": "数码产品评测与推荐，带你了解最新科技资讯，拒绝智商税",
+      "platform": "抖音",
+      "stats": {
+        "followers": 128000,
+        "views": 5600000,
+        "likes": 432000,
+        "comments": 28900,
+        "engagementRate": 8.2
+      },
+      "recentContent": [
+        {"title": "2000元手机拍照对比测评", "views": 890000, "likes": 67500, "date": "2026-05-03"},
+        {"title": "这款平替耳机竟然超越原装？", "views": 567000, "likes": 42300, "date": "2026-04-29"},
+        {"title": "选购指南：笔记本看这篇就够了", "views": 432000, "likes": 31500, "date": "2026-04-26"}
+      ],
+      "audience": {
+        "age": "18-35岁",
+        "gender": "男性偏多",
+        "location": "全国分布"
+      },
+      "contentTags": ["数码评测", "手机推荐", "笔记本", "耳机测评", "科技资讯"]
+    },
+    {
+      "id": "koc_003",
+      "name": "慢享生活家",
+      "category": "lifestyle",
+      "categoryName": "生活方式",
+      "avatar": "🌿",
+      "bio": "分享简约生活理念，在忙碌中寻找诗意，追求有品质的慢生活",
+      "platform": "小红书",
+      "stats": {
+        "followers": 78500,
+        "views": 2100000,
+        "likes": 186000,
+        "comments": 15800,
+        "engagementRate": 9.6
+      },
+      "recentContent": [
+        {"title": "我的极简家居布置清单", "views": 234000, "likes": 28900, "date": "2026-05-02"},
+        {"title": "早起的1小时我都做什么", "views": 189000, "likes": 21500, "date": "2026-04-27"},
+        {"title": "低成本提升幸福感的10件小事", "views": 312000, "likes": 35600, "date": "2026-04-24"}
+      ],
+      "audience": {
+        "age": "22-35岁",
+        "gender": "女性为主",
+        "location": "一二线城市"
+      },
+      "contentTags": ["极简生活", "自我提升", "日常vlog", "家居好物", "生活方式"]
+    },
+    {
+      "id": "koc_004",
+      "name": "编程星球",
+      "category": "education",
+      "categoryName": "知识教育",
+      "avatar": "💻",
+      "bio": "编程入门与职业发展指导，让小白也能轻松学编程",
+      "platform": "B站",
+      "stats": {
+        "followers": 256000,
+        "views": 8900000,
+        "likes": 678000,
+        "comments": 45600,
+        "engagementRate": 8.1
+      },
+      "recentContent": [
+        {"title": "Python入门保姆级教程", "views": 1250000, "likes": 98000, "date": "2026-05-01"},
+        {"title": "程序员简历这样写，HR看了贼开心", "views": 567000, "likes": 43200, "date": "2026-04-28"},
+        {"title": "AI时代学什么语言最吃香", "views": 789000, "likes": 56700, "date": "2026-04-25"}
+      ],
+      "audience": {
+        "age": "18-30岁",
+        "gender": "男性偏多",
+        "location": "全国分布"
+      },
+      "contentTags": ["编程教程", "Python", "职业规划", "AI工具", "学习方法"]
+    },
+    {
+      "id": "koc_005",
+      "name": "美妆日记",
+      "category": "fashion",
+      "categoryName": "时尚美妆",
+      "avatar": "💄",
+      "bio": "平价好物推荐与化妆技巧分享，普通女孩的变美指南",
+      "platform": "视频号",
+      "stats": {
+        "followers": 67200,
+        "views": 1890000,
+        "likes": 145000,
+        "comments": 18900,
+        "engagementRate": 8.6
+      },
+      "recentContent": [
+        {"title": "学生党必备的5支口红", "views": 345000, "likes": 42300, "date": "2026-05-02"},
+        {"title": "新手化妆详细步骤分享", "views": 289000, "likes": 35600, "date": "2026-04-29"},
+        {"title": "这套护肤品用了3年没换过", "views": 234000, "likes": 28900, "date": "2026-04-26"}
+      ],
+      "audience": {
+        "age": "18-28岁",
+        "gender": "女性为主",
+        "location": "二三线城市"
+      },
+      "contentTags": ["美妆教程", "平价好物", "化妆技巧", "护肤心得", "变美日记"]
+    }
+  ]
+}

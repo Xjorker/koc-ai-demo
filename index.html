@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KOC AI增长助手 - 智能营销Demo</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- 登录页面 -->
+    <div class="login-page" id="loginPage">
+        <div class="login-container">
+            <div class="login-header">
+                <i class="fas fa-rocket"></i>
+                <h1>KOC AI增长助手</h1>
+                <p>选择Demo账号开始体验</p>
+            </div>
+            <div class="demo-accounts" id="demoAccounts">
+                <!-- Demo账号将通过JS动态加载 -->
+            </div>
+            <div class="login-divider">
+                <span>或自定义配置</span>
+            </div>
+            <div class="api-quick-config">
+                <div class="form-group">
+                    <label>API端点</label>
+                    <input type="text" id="loginApiEndpoint" placeholder="https://api.openai.com/v1" value="https://api.openai.com/v1">
+                </div>
+                <div class="form-group">
+                    <label>API密钥</label>
+                    <input type="password" id="loginApiKey" placeholder="sk-...">
+                </div>
+                <div class="form-group">
+                    <label>模型名称</label>
+                    <div class="model-select-row">
+                        <select id="loginModelName" style="flex:1;">
+                            <option value="gpt-4-turbo" selected>gpt-4-turbo</option>
+                        </select>
+                        <button type="button" class="btn btn-secondary btn-small" onclick="fetchModelListLogin()">
+                            <i class="fas fa-sync"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-primary btn-large" onclick="loginWithCustom()">
+                <i class="fas fa-sign-in-alt"></i> 开始使用
+            </button>
+        </div>
+    </div>
+
+    <!-- 侧边栏导航 -->
+    <nav class="sidebar" id="sidebar">
+        <div class="logo">
+            <i class="fas fa-rocket"></i>
+            <span>KOC AI增长助手</span>
+        </div>
+        <div class="current-account" id="currentAccount" style="display:none;">
+            <div class="account-avatar" id="accountAvatar"></div>
+            <div class="account-info">
+                <span class="account-name" id="accountName"></span>
+                <span class="account-category" id="accountCategory"></span>
+            </div>
+            <button class="btn-logout" onclick="logout()" title="切换账号">
+                <i class="fas fa-exchange-alt"></i>
+            </button>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item active" data-page="diagnosis">
+                <i class="fas fa-search"></i>
+                <span>账号诊断</span>
+            </li>
+            <li class="nav-item" data-page="topics">
+                <i class="fas fa-lightbulb"></i>
+                <span>智能选题</span>
+            </li>
+            <li class="nav-item" data-page="content">
+                <i class="fas fa-pen-fancy"></i>
+                <span>内容创作</span>
+            </li>
+            <li class="nav-item" data-page="dashboard">
+                <i class="fas fa-chart-line"></i>
+                <span>数据看板</span>
+            </li>
+            <li class="nav-item" data-page="config">
+                <i class="fas fa-cog"></i>
+                <span>API配置</span>
+            </li>
+            <li class="nav-item" data-page="game">
+                <i class="fas fa-gamepad"></i>
+                <span>AI小游戏</span>
+            </li>
+        </ul>
+        <div class="sidebar-footer">
+            <p>腾讯PCG校园AI大赛</p>
+            <p>赛道⑤：智能营销/AI小游戏</p>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+        <!-- API配置页面 -->
+        <div class="page active" id="page-config">
+            <div class="page-header">
+                <h1><i class="fas fa-cog"></i> API配置中心</h1>
+                <p>配置您的AI模型接口，支持所有OpenAI兼容API</p>
+            </div>
+            <div class="config-container">
+                <div class="config-card">
+                    <h2>模型配置</h2>
+                    <div class="form-group">
+                        <label>API端点 (Base URL)</label>
+                        <input type="text" id="apiEndpoint" placeholder="https://api.openai.com/v1" value="https://api.openai.com/v1">
+                        <small>支持OpenAI、混元、DeepSeek、Claude等兼容接口</small>
+                    </div>
+                    <div class="form-group">
+                        <label>API密钥 (API Key)</label>
+                        <input type="password" id="apiKey" placeholder="sk-...">
+                        <small>您的API密钥将仅保存在本地浏览器</small>
+                    </div>
+                    <div class="form-group">
+                        <label>模型名称</label>
+                        <div class="model-select-row">
+                            <select id="modelName" style="flex:1;">
+                                <option value="">-- 请先获取模型列表 --</option>
+                            </select>
+                            <button type="button" class="btn btn-secondary" onclick="fetchModelList()">
+                                <i class="fas fa-sync"></i> 获取模型
+                            </button>
+                        </div>
+                        <small id="modelSelectHint">点击"获取模型"自动列出可用模型，或手动输入模型名称</small>
+                    </div>
+                    <div class="form-group">
+                        <label>温度参数 (Temperature)</label>
+                        <input type="range" id="temperature" min="0" max="2" step="0.1" value="0.7">
+                        <div class="range-labels">
+                            <span>精确 0</span>
+                            <span id="tempValue">0.7</span>
+                            <span>创意 2.0</span>
+                        </div>
+                    </div>
+                    <div class="button-group">
+                        <button class="btn btn-primary" onclick="testConnection()">
+                            <i class="fas fa-plug"></i> 测试连接
+                        </button>
+                        <button class="btn btn-success" onclick="saveConfig()">
+                            <i class="fas fa-save"></i> 保存配置
+                        </button>
+                    </div>
+                    <div id="configStatus" class="status-message"></div>
+                </div>
+
+                <div class="config-card">
+                    <h2>预设配置</h2>
+                    <div class="preset-list">
+                        <div class="preset-item" onclick="loadPreset('openai')">
+                            <i class="fab fa-openai"></i>
+                            <div>
+                                <h3>OpenAI</h3>
+                                <p>GPT-4/GPT-3.5</p>
+                            </div>
+                        </div>
+                        <div class="preset-item" onclick="loadPreset('hunyuan')">
+                            <i class="fas fa-cloud"></i>
+                            <div>
+                                <h3>腾讯混元</h3>
+                                <p>hunyuan-pro</p>
+                            </div>
+                        </div>
+                        <div class="preset-item" onclick="loadPreset('deepseek')">
+                            <i class="fas fa-brain"></i>
+                            <div>
+                                <h3>DeepSeek</h3>
+                                <p>deepseek-chat</p>
+                            </div>
+                        </div>
+                        <div class="preset-item" onclick="loadPreset('custom')">
+                            <i class="fas fa-cog"></i>
+                            <div>
+                                <h3>自定义</h3>
+                                <p>自行配置端点</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="config-card">
+                    <h2>使用说明</h2>
+                    <div class="instructions">
+                        <ol>
+                            <li>选择预设配置或手动填写API信息</li>
+                            <li>点击"测试连接"验证API可用性</li>
+                            <li>保存配置后即可使用所有AI功能</li>
+                            <li>所有配置仅保存在本地，保护您的隐私</li>
+                        </ol>
+                        <div class="warning-box">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p>Demo模式：当前为演示版本，AI响应为模拟数据。实际部署时需连接真实API。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 账号诊断页面 -->
+        <div class="page" id="page-diagnosis">
+            <div class="page-header">
+                <h1><i class="fas fa-search"></i> 账号诊断中心</h1>
+                <p>AI深度分析您的账号定位与内容策略</p>
+            </div>
+            <div class="diagnosis-container">
+                <div class="current-account-card" id="currentAccountCard">
+                    <div class="account-card-info">
+                        <span class="account-avatar-large" id="diagnosisAccountAvatar"></span>
+                        <div class="account-details">
+                            <h2 id="diagnosisAccountName"></h2>
+                            <p id="diagnosisAccountBio"></p>
+                            <div class="account-stats-mini" id="accountStatsMini"></div>
+                        </div>
+                    </div>
+                    <button class="btn btn-secondary" onclick="logout()">
+                        <i class="fas fa-exchange-alt"></i> 切换账号
+                    </button>
+                </div>
+
+                <div class="input-section">
+                    <div class="form-group">
+                        <label>诊断重点（可选）</label>
+                        <textarea id="diagnosisFocus" rows="2" placeholder="例如：希望提升互动率、想拓展新受众群体、想优化内容方向等"></textarea>
+                    </div>
+                    <button class="btn btn-primary btn-large" onclick="startDiagnosis()">
+                        <i class="fas fa-stethoscope"></i> 开始AI诊断
+                    </button>
+                </div>
+
+                <div class="result-section" id="diagnosisResult" style="display:none;">
+                    <div class="section-loading" id="diagnosisLoading" style="display:none;">
+                        <div class="spinner-sm"></div>
+                        <p>AI正在分析账号...</p>
+                    </div>
+                    <h2>诊断报告</h2>
+                    <div class="diagnosis-report">
+                        <div class="report-section">
+                            <h3><i class="fas fa-bullseye"></i> 账号定位分析</h3>
+                            <div id="positioningAnalysis" class="report-content"></div>
+                        </div>
+                        <div class="report-section">
+                            <h3><i class="fas fa-chart-bar"></i> 内容策略建议</h3>
+                            <div id="contentStrategy" class="report-content"></div>
+                        </div>
+                        <div class="report-section">
+                            <h3><i class="fas fa-users"></i> 受众画像推测</h3>
+                            <div id="audienceProfile" class="report-content"></div>
+                        </div>
+                        <div class="report-section">
+                            <h3><i class="fas fa-rocket"></i> 涨粉路径规划</h3>
+                            <div id="growthPlan" class="report-content"></div>
+                        </div>
+                        <div class="score-section">
+                            <h3>综合评分</h3>
+                            <div class="score-circle">
+                                <svg viewBox="0 0 100 100">
+                                    <circle cx="50" cy="50" r="45" class="score-bg"/>
+                                    <circle cx="50" cy="50" r="45" class="score-fill" id="scoreCircle"/>
+                                </svg>
+                                <div class="score-text" id="scoreText">0</div>
+                            </div>
+                            <p class="score-label">账号健康度</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 智能选题页面 -->
+        <div class="page" id="page-topics">
+            <div class="page-header">
+                <h1><i class="fas fa-lightbulb"></i> 智能选题引擎</h1>
+                <p>基于热点趋势与账号定位的AI选题推荐</p>
+            </div>
+            <div class="topics-container">
+                <div class="topics-controls">
+                    <div class="control-row">
+                        <div class="form-group inline">
+                            <label>内容赛道</label>
+                            <select id="contentCategory">
+                                <option value="lifestyle">生活方式</option>
+                                <option value="tech">科技数码</option>
+                                <option value="food">美食探店</option>
+                                <option value="travel">旅行户外</option>
+                                <option value="fashion">时尚美妆</option>
+                                <option value="fitness">健身运动</option>
+                                <option value="education">知识教育</option>
+                                <option value="entertainment">娱乐八卦</option>
+                            </select>
+                        </div>
+                        <div class="form-group inline">
+                            <label>选题数量</label>
+                            <input type="number" id="topicCount" min="1" max="10" value="5">
+                        </div>
+                        <div class="form-group inline">
+                            <label>创意程度</label>
+                            <select id="creativityLevel">
+                                <option value="conservative">稳健实用</option>
+                                <option value="balanced" selected>平衡创新</option>
+                                <option value="creative">大胆创新</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" onclick="generateTopics()">
+                            <i class="fas fa-magic"></i> 生成选题
+                        </button>
+                    </div>
+                    <div class="hot-topics">
+                        <h3><i class="fas fa-fire"></i> 今日热点</h3>
+                        <div class="hot-tags" id="hotTopics">
+                            <span class="hot-tag">#AI工具推荐</span>
+                            <span class="hot-tag">#职场干货</span>
+                            <span class="hot-tag">#生活方式</span>
+                            <span class="hot-tag">#省钱攻略</span>
+                            <span class="hot-tag">#春季穿搭</span>
+                            <span class="hot-tag">#健身打卡</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="topics-list" id="topicsList">
+                    <div class="section-loading" id="topicsLoading" style="display:none;">
+                        <div class="spinner-sm"></div>
+                        <p>AI正在生成选题...</p>
+                    </div>
+                    <div class="empty-state">
+                        <i class="fas fa-lightbulb"></i>
+                        <p>选择赛道并点击"生成选题"获取AI推荐</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 内容创作页面 -->
+        <div class="page" id="page-content">
+            <div class="page-header">
+                <h1><i class="fas fa-pen-fancy"></i> AI内容创作助手</h1>
+                <p>一键生成视频脚本、文案、标题等创作内容</p>
+            </div>
+            <div class="content-container">
+                <div class="creation-tools">
+                    <div class="tool-tabs">
+                        <button class="tool-tab active" data-tool="script">视频脚本</button>
+                        <button class="tool-tab" data-tool="title">标题优化</button>
+                        <button class="tool-tab" data-tool="copy">文案生成</button>
+                        <button class="tool-tab" data-tool="cover">封面建议</button>
+                    </div>
+
+                    <div class="tool-content" id="scriptTool">
+                        <div class="form-group">
+                            <label>视频主题</label>
+                            <input type="text" id="videoTopic" placeholder="例如：春季穿搭指南">
+                        </div>
+                        <div class="form-group">
+                            <label>视频时长</label>
+                            <select id="videoDuration">
+                                <option value="30">30秒短视频</option>
+                                <option value="60" selected>60秒中视频</option>
+                                <option value="180">3分钟长视频</option>
+                                <option value="300">5分钟以上</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>风格倾向</label>
+                            <div class="style-options">
+                                <label class="style-option">
+                                    <input type="radio" name="style" value="professional" checked>
+                                    <span>专业严谨</span>
+                                </label>
+                                <label class="style-option">
+                                    <input type="radio" name="style" value="humorous">
+                                    <span>幽默轻松</span>
+                                </label>
+                                <label class="style-option">
+                                    <input type="radio" name="style" value="emotional">
+                                    <span>情感共鸣</span>
+                                </label>
+                                <label class="style-option">
+                                    <input type="radio" name="style" value="direct">
+                                    <span>直截了当</span>
+                                </label>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary btn-large" onclick="generateScript()">
+                            <i class="fas fa-wand-magic-sparkles"></i> 生成脚本
+                        </button>
+                    </div>
+
+                    <div class="tool-content" id="titleTool" style="display:none;">
+                        <div class="form-group">
+                            <label>视频/内容主题</label>
+                            <input type="text" id="titleTopic" placeholder="输入您的内容主题">
+                        </div>
+                        <div class="form-group">
+                            <label>目标平台</label>
+                            <select id="targetPlatform">
+                                <option value="wechat">视频号</option>
+                                <option value="douyin">抖音</option>
+                                <option value="xiaohongshu">小红书</option>
+                                <option value="bilibili">B站</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary btn-large" onclick="generateTitles()">
+                            <i class="fas fa-heading"></i> 生成标题
+                        </button>
+                    </div>
+
+                    <div class="result-panel" id="contentResult">
+                        <div class="empty-state">
+                            <i class="fas fa-file-lines"></i>
+                            <p>选择创作工具并生成内容</p>
+                        </div>
+                        <div class="inline-loading" id="inlineLoading" style="display:none;">
+                            <div class="spinner-sm"></div>
+                            <p>AI正在思考中...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 数据看板页面 -->
+        <div class="page" id="page-dashboard">
+            <div class="page-header">
+                <h1><i class="fas fa-chart-line"></i> 数据看板</h1>
+                <p>追踪账号成长，优化内容策略</p>
+            </div>
+            <div class="dashboard-container">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="followerCount">-</h3>
+                            <p>总粉丝数</p>
+                            <span class="stat-change positive" id="followerChange">-</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="viewCount">-</h3>
+                            <p>总播放量</p>
+                            <span class="stat-change positive" id="viewChange">-</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="likeCount">-</h3>
+                            <p>总点赞数</p>
+                            <span class="stat-change positive" id="likeChange">-</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                            <i class="fas fa-comment"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="commentCount">-</h3>
+                            <p>总评论数</p>
+                            <span class="stat-change positive" id="commentChange">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="charts-section">
+                    <div class="chart-card">
+                        <h3>内容数据详情</h3>
+                        <div class="recent-content-list" id="recentContentList">
+                            <!-- 近期内容将通过JS动态加载 -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="insights-section">
+                    <h3><i class="fas fa-lightbulb"></i> 受众画像</h3>
+                    <div class="audience-profile" id="audienceProfile">
+                        <!-- 受众信息将通过JS动态加载 -->
+                    </div>
+                </div>
+
+                <div class="content-tags-section">
+                    <h3><i class="fas fa-tags"></i> 内容标签</h3>
+                    <div class="content-tags" id="contentTags">
+                        <!-- 标签将通过JS动态加载 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI小游戏页面 -->
+        <div class="page" id="page-game">
+            <div class="page-header">
+                <h1><i class="fas fa-gamepad"></i> AI小游戏生成器</h1>
+                <p>AI驱动的互动小游戏创作，助力账号涨粉与用户互动</p>
+            </div>
+            <div class="game-container">
+                <div class="game-input-section">
+                    <div class="game-templates">
+                        <h3><i class="fas fa-layer-group"></i> 选择游戏类型</h3>
+                        <div class="template-grid">
+                            <div class="template-card selected" data-type="challenge" onclick="selectGameTemplate(this)">
+                                <i class="fas fa-stopwatch"></i>
+                                <h4>挑战类</h4>
+                                <p>限时挑战、记忆挑战</p>
+                                <span class="template-tag">涨粉利器</span>
+                            </div>
+                            <div class="template-card" data-type="quiz" onclick="selectGameTemplate(this)">
+                                <i class="fas fa-clipboard-question"></i>
+                                <h4>问答类</h4>
+                                <p>性格测试、知识问答</p>
+                            </div>
+                            <div class="template-card" data-type="interactive" onclick="selectGameTemplate(this)">
+                                <i class="fas fa-hand-pointer"></i>
+                                <h4>互动测试</h4>
+                                <p>测试你是哪种类型</p>
+                                <span class="template-tag">易传播</span>
+                            </div>
+                            <div class="template-card" data-type="casino" onclick="selectGameTemplate(this)">
+                                <i class="fas fa-dice"></i>
+                                <h4>抽奖类</h4>
+                                <p>转盘、抽签</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="game-params">
+                        <h3><i class="fas fa-sliders-h"></i> 游戏参数</h3>
+                        <div class="form-group">
+                            <label>游戏主题/话题</label>
+                            <input type="text" id="gameTopic" placeholder="例如：3秒记忆挑战、测测你的星座性格">
+                        </div>
+                        <div class="form-group">
+                            <label>游戏时长</label>
+                            <select id="gameDuration">
+                                <option value="3">3秒（超快节奏）</option>
+                                <option value="10" selected>10秒（适中）</option>
+                                <option value="30">30秒（较长）</option>
+                                <option value="60">60秒（完整版）</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>游戏风格</label>
+                            <div class="style-options">
+                                <label class="style-option">
+                                    <input type="radio" name="gameStyle" value="fun" checked>
+                                    <span>欢乐有趣</span>
+                                </label>
+                                <label class="style-option">
+                                    <input type="radio" name="gameStyle" value="cool">
+                                    <span>酷炫潮流</span>
+                                </label>
+                                <label class="style-option">
+                                    <input type="radio" name="gameStyle" value="cute">
+                                    <span>可爱清新</span>
+                                </label>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary btn-large" onclick="generateMiniGame()">
+                            <i class="fas fa-wand-magic-sparkles"></i> AI生成小游戏
+                        </button>
+                    </div>
+                </div>
+
+                <div class="game-result-section" id="gameResult" style="display:none;">
+                    <div class="section-loading" id="gameLoading" style="display:none;">
+                        <div class="spinner-sm"></div>
+                        <p>AI正在设计游戏...</p>
+                    </div>
+                    <h2><i class="fas fa-gift"></i> 游戏设计方案</h2>
+                    <div class="game-result-content" id="gameResultContent"></div>
+                </div>
+
+                <div class="game-features">
+                    <h3><i class="fas fa-star"></i> 小游戏涨粉优势</h3>
+                    <div class="feature-grid">
+                        <div class="feature-item">
+                            <i class="fas fa-share-nodes"></i>
+                            <h4>社交裂变</h4>
+                            <p>用户分享成绩到朋友圈，带来自然流量</p>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-users"></i>
+                            <h4>互动性强</h4>
+                            <p>游戏形式提升用户参与度和停留时长</p>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-viruses"></i>
+                            <h4>病毒传播</h4>
+                            <p>挑战类游戏激发攀比心理，自发传播</p>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-money-bill"></i>
+                            <h4>变现途径</h4>
+                            <p>可承接品牌游戏定制任务实现变现</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 加载动画 -->
+    <div class="loading-overlay" id="loadingOverlay" style="display:none;">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>AI正在思考中...</p>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
